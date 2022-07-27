@@ -1,0 +1,15 @@
+{
+
+    "manifest_version": 2,
+    "name": "Geoguessr Counter",
+    "version": "1.0",
+  
+    "description": "Counts geoguessr locations",
+    "permissions" : ["activeTab", "scripting", "webRequest",     "<all_urls>", "webRequestBlocking"],
+  
+    "background" : {
+        "scripts" : ["br-script.js"]
+    }
+  
+  }
+  
