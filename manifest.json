@@ -8,7 +8,7 @@
     "permissions" : ["activeTab", "scripting", "webRequest",     "<all_urls>", "webRequestBlocking"],
   
     "background" : {
-        "scripts" : ["br-script.js"]
+        "scripts" : ["br-script.js", "jingy.js"]
     }
   
   }
