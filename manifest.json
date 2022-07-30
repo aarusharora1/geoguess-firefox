@@ -5,7 +5,7 @@
     "version": "1.0",
   
     "description": "Counts geoguessr locations",
-    "permissions" : ["activeTab", "scripting", "webRequest",     "<all_urls>", "webRequestBlocking"],
+    "permissions" : ["activeTab", "scripting", "webRequest",  "storage",   "<all_urls>", "webRequestBlocking"],
   
     "background" : {
         "scripts" : ["br-script.js"]

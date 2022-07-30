@@ -1,3 +1,5 @@
+
+var gameLobbyIdCurrent = "";
 function listener(details) {
   console.log("peepee");
   let filter = browser.webRequest.filterResponseData(details.requestId);
@@ -12,6 +14,7 @@ function listener(details) {
       console.log(parsed);
       if (parsed["gameLobbyId"]) {
         console.log(parsed["gameLobbyId"]);
+        gameLobbyIdCurrent = parsed["gameLobbyId"];
         browser.webRequest.onBeforeRequest.addListener(
           listenerTwo,
           {
@@ -35,6 +38,14 @@ function listener(details) {
 
   return {};
 }
+
+function storeThings(parsed) {
+  const objectToStore = {};
+  objectToStore[gameLobbyIdCurrent] = parsed["rounds"];
+  return objectToStore;
+}
+
+
 function listenerTwo(details) {
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let decoder = new TextDecoder("utf-8");
@@ -47,6 +58,8 @@ function listenerTwo(details) {
       const parsed = JSON.parse(str);
       //console.log(parsed);
       if (parsed["rounds"]) {
+        
+        browser.storage.local.set(storeThings(parsed));
         //console.log(parsed["rounds"]);
         const currentRound = parsed["rounds"][parsed["rounds"].length - 1];
         if (currentRound) {
