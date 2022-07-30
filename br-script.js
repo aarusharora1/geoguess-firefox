@@ -36,7 +36,6 @@ function listener(details) {
   return {};
 }
 function listenerTwo(details) {
-  console.log("poopoo");
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let decoder = new TextDecoder("utf-8");
   let encoder = new TextEncoder();
@@ -46,14 +45,16 @@ function listenerTwo(details) {
     //console.log(str);
     try {
       const parsed = JSON.parse(str);
-      console.log(parsed);
+      //console.log(parsed);
       if (parsed["rounds"]) {
         //console.log(parsed["rounds"]);
         const currentRound = parsed["rounds"][parsed["rounds"].length - 1];
         if (currentRound) {
-          console.log(currentRound);
+          //console.log(currentRound);
           console.log(currentRound["lat"]);
           console.log(currentRound["lng"]);
+          const gMapsString = "https://www.google.com/maps/search/"+ currentRound["lat"] + ","+ currentRound["lng"];
+          console.log(gMapsString);
         }
       }
     } catch {
