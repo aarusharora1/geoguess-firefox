@@ -1,0 +1,1 @@
+A tool to record all locations given in Geoguessr Battle-Royale Gamemodes. Works on each refresh of a battle-royale game.
