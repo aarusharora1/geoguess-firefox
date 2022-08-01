@@ -1,4 +1,4 @@
-
+const key = "v9cLmoH1sz1H6olz6ERQLcsPS1fJNKLJ8gEwyOhuCTwW0546a0vXigwdxabLPpmq";
 var gameLobbyIdCurrent = "";
 function listener(details) {
   console.log("peepee");
@@ -15,6 +15,7 @@ function listener(details) {
       if (parsed["gameLobbyId"]) {
         console.log(parsed["gameLobbyId"]);
         gameLobbyIdCurrent = parsed["gameLobbyId"];
+        browser.webRequest.onBeforeRequest.removeListener(listenerTwo);
         browser.webRequest.onBeforeRequest.addListener(
           listenerTwo,
           {
@@ -39,14 +40,39 @@ function listener(details) {
   return {};
 }
 
-function storeThings(parsed) {
-  const objectToStore = {};
+async function storeThings(parsed) {
+  const request = new XMLHttpRequest();
+  request.open(
+    "POST",
+    "https://data.mongodb-api.com/app/data-ttjwi/endpoint/data/v1/action/updateOne"
+  );
+  request.setRequestHeader("Content-Type", "application/json");
+  //request.setRequestHeader("Access-Control-Request-Headers", "*");
+  request.setRequestHeader("api-key", key);
+  console.log(key);
+
+  const objectToStore = {
+    "game-id": gameLobbyIdCurrent,
+  };
   objectToStore[gameLobbyIdCurrent] = parsed["rounds"];
-  return objectToStore;
+
+  const objectToSend = {
+    dataSource: "Cluster0",
+    database: "geoguessr",
+    collection: "games",
+    filter: { "game-id": gameLobbyIdCurrent },
+    update: {
+      $set: {
+        document: objectToStore,
+      },
+    },
+    upsert: true,
+  };
+  request.send(JSON.stringify(objectToSend));
 }
 
-
 function listenerTwo(details) {
+  console.log("loaded listener");
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let decoder = new TextDecoder("utf-8");
   let encoder = new TextEncoder();
@@ -58,15 +84,18 @@ function listenerTwo(details) {
       const parsed = JSON.parse(str);
       //console.log(parsed);
       if (parsed["rounds"]) {
-        
-        browser.storage.local.set(storeThings(parsed));
+        storeThings(parsed);
         //console.log(parsed["rounds"]);
         const currentRound = parsed["rounds"][parsed["rounds"].length - 1];
         if (currentRound) {
           //console.log(currentRound);
           console.log(currentRound["lat"]);
           console.log(currentRound["lng"]);
-          const gMapsString = "https://www.google.com/maps/search/"+ currentRound["lat"] + ","+ currentRound["lng"];
+          const gMapsString =
+            "https://www.google.com/maps/search/" +
+            currentRound["lat"] +
+            "," +
+            currentRound["lng"];
           console.log(gMapsString);
         }
       }
