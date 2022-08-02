@@ -2,3 +2,4 @@ plan.md
 apiKey.js
 
 /rust-parse/parser/target
+/rust-parse/parser/src/secret.rs
