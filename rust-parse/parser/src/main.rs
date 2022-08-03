@@ -14,7 +14,7 @@ struct Coordinates {
 
 #[tokio::main]
     async fn main() -> mongodb::error::Result<()> {
-        //std::env::set_var("RUST_BACKTRACE", "1");
+        std::env::set_var("RUST_BACKTRACE", "1");
 
         let client_options = ClientOptions::parse(
             secret::secret(),
@@ -27,24 +27,25 @@ struct Coordinates {
 
 
         let mut all_documents = Collection::find(&games, None, None).await?;
+          
+        while all_documents.advance().await? {
+          let deserialized = all_documents.deserialize_current()?;
 
-        // TryStream uses try_next() and iterates over Result<Option<T>>
-        while let Some(doc) = all_documents.try_next().await? {
-            let deserialized = all_documents.deserialize_current()?;
-            
-            println!(" " );
+            //println!("{:?}", deserialized);
+                        println!(" " );
             let mut game_id : String = String::from("");
             let mut document_result : bson::Document = bson::Document::new();
             let stored_document = bson::Document::get_document(&deserialized, String::from("document"));
 
             match stored_document {
                 Ok(v) => {document_result=bson::Document::clone(v);},
-                Err(e) => println!("{}", e),
+                Err(e) => {println!("{}", e); continue;},
             }         
-            let game_id_result = bson::Document::get_str(&document_result, String::from("gameid"));
+            //println!("{:?}", document_result);
+                        let game_id_result = bson::Document::get_str(&document_result, String::from("gameid"));
             match game_id_result {
                 Ok(v) => {game_id = String::from(v);},
-                Err(e) => {println!("{}", e);}
+                Err(e) => {println!("{}", e); continue;},
             }   
             println!("{}", game_id);
             println!(" ");
@@ -61,10 +62,6 @@ struct Coordinates {
                     lng: lng,
                 };
             }
-            
         }
-        // TryStream uses try_collect() and collects into a Result<Vec<T>>
-        let v: Vec<_> = all_documents.try_collect().await?;    
-
         Ok(())
     }
