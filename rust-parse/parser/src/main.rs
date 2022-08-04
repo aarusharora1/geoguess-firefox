@@ -2,7 +2,7 @@ mod secret;
 use mongodb::{ options::ClientOptions, Client   };
 use mongodb::bson::{ Document};
 use mongodb::Collection;
-use futures::stream::{ TryStreamExt};
+// use futures::stream::{ TryStreamExt};
 //use serde::{Serialize, Deserialize};
 //use std::sync::Arc; 
 
@@ -52,9 +52,9 @@ struct Coordinates {
             let sub_doc = bson::Document::get_array(&document_result, game_id).unwrap();
             //println!("{:?}", sub_doc);   
             for element in sub_doc {
-                let docDoc : bson::Document = bson::to_document(&element).unwrap();
-                let lat = bson::Document::get_f64(&docDoc, String::from("lat")).unwrap();
-                let lng = bson::Document::get_f64(&docDoc, String::from("lng")).unwrap();
+                let doc_doc : bson::Document = bson::to_document(&element).unwrap();
+                let lat = bson::Document::get_f64(&doc_doc, String::from("lat")).unwrap();
+                let lng = bson::Document::get_f64(&doc_doc, String::from("lng")).unwrap();
                 println!("{:?}", lat);
                 println!("{:?}", lng);
                 let point = Coordinates {
