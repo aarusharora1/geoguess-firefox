@@ -5,15 +5,33 @@ use mongodb::Collection;
 // use futures::stream::{ TryStreamExt};
 //use serde::{Serialize, Deserialize};
 //use std::sync::Arc; 
+//use std::io;
+//use std::process;
+use std::error::Error;
 
 struct Coordinates {
     lat: f64,
     lng: f64, 
 }
 
+fn write_all_points(coords : Vec<Coordinates>) -> Result<(), Box<dyn Error>> {
+    let file_path = String::from("./output.csv");
+    let mut wtr = csv::Writer::from_path(file_path)?;
+    // When writing records without Serde, the header record is written just
+    // like any other record.
+    wtr.write_record([String::from("lat"), String::from("lng")])?;
+    for coord in coords {
+        wtr.write_record([coord.lat.to_string(), coord.lng.to_string()])?;
+    }
+
+    wtr.flush()?;
+    Ok(())
+}
 
 #[tokio::main]
     async fn main() -> mongodb::error::Result<()> {
+        let mut coord_vector: Vec<Coordinates> = Vec::new();
+
         std::env::set_var("RUST_BACKTRACE", "1");
 
         let client_options = ClientOptions::parse(
@@ -61,7 +79,13 @@ struct Coordinates {
                     lat: lat,
                     lng: lng,
                 };
+                coord_vector.push(point);
             }
         }
+        let write_result = write_all_points(coord_vector);
+                match write_result {
+                    Ok(_v) => {println!("worked");},
+                    Err(_e) => {println!("didn't work");}
+                }
         Ok(())
     }
