@@ -52,7 +52,7 @@ async function storeThings(parsed) {
   console.log(key);
 
   const objectToStore = {
-    "game-id": gameLobbyIdCurrent,
+    "gameid": gameLobbyIdCurrent,
   };
   objectToStore[gameLobbyIdCurrent] = parsed["rounds"];
 
@@ -60,7 +60,7 @@ async function storeThings(parsed) {
     dataSource: "Cluster0",
     database: "geoguessr",
     collection: "games",
-    filter: { "game-id": gameLobbyIdCurrent },
+    filter: { "gameid": gameLobbyIdCurrent },
     update: {
       $set: {
         document: objectToStore,
