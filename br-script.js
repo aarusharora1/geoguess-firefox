@@ -1,5 +1,33 @@
 const key = "v9cLmoH1sz1H6olz6ERQLcsPS1fJNKLJ8gEwyOhuCTwW0546a0vXigwdxabLPpmq";
 var gameLobbyIdCurrent = "";
+
+function addSecondListener(str) {
+  try {
+    const parsed = JSON.parse(str);
+    console.log(parsed);
+    if (parsed["gameLobbyId"]) {
+      console.log(parsed["gameLobbyId"]);
+      gameLobbyIdCurrent = parsed["gameLobbyId"];
+      browser.webRequest.onBeforeRequest.removeListener(listenerTwo);
+      browser.webRequest.onBeforeRequest.addListener(
+        listenerTwo,
+        {
+          urls: [
+            "*://game-server.geoguessr.com/api/battle-royale/" +
+              parsed["gameLobbyId"] +
+              "/*",
+          ],
+        },
+        ["blocking"]
+      );
+    }
+  } catch {
+    console.error("error parsing");
+  }
+}
+
+
+
 function listener(details) {
   console.log("peepee");
   let filter = browser.webRequest.filterResponseData(details.requestId);
@@ -9,28 +37,7 @@ function listener(details) {
   filter.ondata = (event) => {
     let str = decoder.decode(event.data, { stream: true });
 
-    try {
-      const parsed = JSON.parse(str);
-      console.log(parsed);
-      if (parsed["gameLobbyId"]) {
-        console.log(parsed["gameLobbyId"]);
-        gameLobbyIdCurrent = parsed["gameLobbyId"];
-        browser.webRequest.onBeforeRequest.removeListener(listenerTwo);
-        browser.webRequest.onBeforeRequest.addListener(
-          listenerTwo,
-          {
-            urls: [
-              "*://game-server.geoguessr.com/api/battle-royale/" +
-                parsed["gameLobbyId"] +
-                "/*",
-            ],
-          },
-          ["blocking"]
-        );
-      }
-    } catch {
-      console.error("error parsing");
-    }
+    addSecondListener(str);
 
     filter.write(encoder.encode(str));
     filter.close();
