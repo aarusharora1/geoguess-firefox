@@ -1,6 +1,4 @@
-const key = "v9cLmoH1sz1H6olz6ERQLcsPS1fJNKLJ8gEwyOhuCTwW0546a0vXigwdxabLPpmq";
 var gameLobbyIdCurrent = "";
-
 function addSecondListener(str) {
   try {
     const parsed = JSON.parse(str);
@@ -48,6 +46,9 @@ function listener(details) {
 }
 
 async function storeThings(parsed) {
+  const key2 = await import("./apiKey.js");
+  const key = key2["default"];
+  //console.log(key);
   const request = new XMLHttpRequest();
   request.open(
     "POST",
@@ -56,7 +57,7 @@ async function storeThings(parsed) {
   request.setRequestHeader("Content-Type", "application/json");
   //request.setRequestHeader("Access-Control-Request-Headers", "*");
   request.setRequestHeader("api-key", key);
-  console.log(key);
+  //console.log(key);
 
   const objectToStore = {
     "gameid": gameLobbyIdCurrent,
