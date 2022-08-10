@@ -1,8 +1,15 @@
 var gameLobbyIdCurrent = "";
 function addSecondListener(str) {
+  var parsed = {};
   try {
-    const parsed = JSON.parse(str);
+    parsed = JSON.parse(str);
     console.log(parsed);
+  }
+  catch {
+    console.log(str);
+    console.error("error parsing");
+  }
+  try {
     if (parsed["gameLobbyId"]) {
       console.log(parsed["gameLobbyId"]);
       gameLobbyIdCurrent = parsed["gameLobbyId"];
@@ -19,9 +26,12 @@ function addSecondListener(str) {
         ["blocking"]
       );
     }
-  } catch {
-    console.error("error parsing");
   }
+  catch {
+    
+    console.error("error not parsing");
+  }
+   
 }
 
 
@@ -108,6 +118,7 @@ function listenerTwo(details) {
         }
       }
     } catch {
+      console.log(str);
       console.error("error parsing");
     }
     filter.write(encoder.encode(str));

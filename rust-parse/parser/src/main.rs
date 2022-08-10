@@ -2,11 +2,6 @@ mod secret;
 use mongodb::bson::Document;
 use mongodb::Collection;
 use mongodb::{options::ClientOptions, Client};
-// use futures::stream::{ TryStreamExt};
-//use serde::{Serialize, Deserialize};
-//use std::sync::Arc;
-//use std::io;
-//use std::process;
 use std::error::Error;
 
 struct Coordinates {
